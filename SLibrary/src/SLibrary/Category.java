@@ -6,6 +6,7 @@ package SLibrary;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 /**
  *
  * @author Manimekala
@@ -69,6 +70,8 @@ public class Category extends javax.swing.JFrame {
                 txtCategoryActionPerformed(evt);
             }
         });
+
+        txtStatus.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Active", "Deactive" }));
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -190,6 +193,29 @@ public class Category extends javax.swing.JFrame {
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
+        String category = txtCategory.getText();
+        String status = txtStatus.getSelectedItem().toString();
+        
+        try {
+            st = cn.prepareStatement("Insert into category(category_name,status)values(?,?)");
+            st.setString(1, category);
+            st.setString(2, status);
+            int k = st.executeUpdate();
+            
+            if(k==1){
+                JOptionPane.showMessageDialog(this,"Category created");
+                txtCategory.setText("");
+                txtStatus.setSelectedIndex(-1);
+                txtCategory.requestFocus();
+            }
+            else{
+                JOptionPane.showMessageDialog(this,"Error");
+                
+            }
+            
+        } catch (SQLException ex) {
+            Logger.getLogger(Category.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
