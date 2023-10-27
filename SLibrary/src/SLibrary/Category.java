@@ -4,9 +4,11 @@
  */
 package SLibrary;
 import java.sql.*;
+import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Manimekala
@@ -14,12 +16,14 @@ import javax.swing.JOptionPane;
 public class Category extends javax.swing.JFrame {
     public Connection cn;
     public PreparedStatement st;
+    public ResultSet rs;
     /**
      * Creates new form Category
      */
     public Category() {
         initComponents();
         Connect();
+        Category_load();
     }
     
     public void Connect(){
@@ -29,6 +33,37 @@ public class Category extends javax.swing.JFrame {
             System.out.println("connected successfully");
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(Category.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(Category.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    public void Category_load(){//load data to table
+        int c;
+        try {
+            st = cn.prepareStatement("select * from category");
+            rs = st.executeQuery();
+            
+            ResultSetMetaData rsd = rs.getMetaData();
+            
+            c = rsd.getColumnCount();
+            
+            DefaultTableModel d = (DefaultTableModel)jTable1.getModel();
+            
+            d.setRowCount(0);
+            
+            while(rs.next()){
+                Vector v2 = new Vector();
+                
+                for(int i=1;i<=c;i++){
+                    v2.add(rs.getString("Id"));
+                    v2.add(rs.getString("category_name"));
+                    v2.add(rs.getString("status"));
+                }
+                d.addRow(v2);
+            }
+            
         } catch (SQLException ex) {
             Logger.getLogger(Category.class.getName()).log(Level.SEVERE, null, ex);
         }
